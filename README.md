@@ -1,3 +1,3 @@
 Hey matt...
 
-![itsfreerealestate](http://www.github.com/aehoppe/freerealestate/fre.gif "Free Real Estate")
+![itsfreerealestate](https://github.com/aehoppe/freerealestate/blob/master/fre.gif "Free Real Estate")
