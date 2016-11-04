@@ -1,3 +1,3 @@
 Hey matt...
 
-!itsfreerealestate](//giphy.com/embed/5wWf7GMbT1ZUGTDdTqM)
+!itsfreerealestate](giphy.com/embed/5wWf7GMbT1ZUGTDdTqM)
