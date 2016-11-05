@@ -19,7 +19,7 @@ class SampleListener(Leap.Listener):
 
 	    everything = literallyEverything(controller)
 	    ohgod.append(everything["position"])
-	    print "pinchin: %s, position: %f, %f" % (everything["mode"], everything["position"][0], everything["position"][1])
+	    print "pinchin: %f, position: %f, %f" % (frame.hands.rightmost.palm_velocity, everything["position"][0], everything["position"][1])
 	    
 	    # print "Pinch Strength: %f" % frame.hands.rightmost.pinch_strength
 	    # # print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d" % (
@@ -38,6 +38,8 @@ def literallyEverything(controller):
 
 	if frame.hands.rightmost.pinch_strength > 0.7:
 		everything["mode"] = 'draw'
+	elif frame.hands.rightmost.grab_strength > 0.7:
+		everything["mode"] = 'clear'
 
 	if frame.hands.rightmost.is_valid:
 		everything["position"] = positionMap(controller)
@@ -53,6 +55,9 @@ def positionMap(controller):
 
 	app_width = 800
 	app_height = 600
+
+	app_x = -1
+	app_y = -1
 
 	pointable = frame.pointables.frontmost
 	if pointable.is_valid:
