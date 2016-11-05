@@ -90,7 +90,6 @@ class PyGameView(object):
         self.cursorOldX, self.cursorOldY = (x, y)
         pygame.display.update([dirtyrect])
 
-
 class Model(object):
     """
     Represents the state of all entities in the environment and drawing
@@ -247,4 +246,4 @@ if __name__ == '__main__':
         # view.draw_sprite()
         # time.sleep(model.sleep_time)
 
-    controllerLeap.remove_listener(listener)
+    controller.remove_listener(listener)
