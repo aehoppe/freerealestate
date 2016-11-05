@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import QUIT, KEYDOWN
+import time
 import os
 
 
@@ -35,14 +36,13 @@ class PyGameView(object):
         self.screen.blit(text_render, (x, y))
 
 
-    def draw_sprite(self, x, y):
-        if this.model.sprite == 0:
-            pygame.draw.circle(
-                self.screen,
-                pygame.Color(255, 0, 0, 255),
-                (x, y),
-                5
-            )
+    def draw_sprite(self):
+        pygame.draw.circle(
+            self.screen,
+            pygame.Color(255, 0, 0, 255),
+            self.model.sprite.coords,
+            5
+        )
         pygame.display.update()
 
 
@@ -65,8 +65,9 @@ class Model(object):
         #window parameters / drawing
         self.height = height
         self.width = width
+        self.sleep_time = 20
 
-        self.sprite = Sprite()
+        self.sprite = Sprite(0)
 
 
 class PyGameController(object):
@@ -92,7 +93,7 @@ class PyGameController(object):
         Args:
             event (pygame class): type of event
         """
-        if event.type == MOUSEBUTTONDOWN:
+        if event.type == 'MOUSEBUTTONDOWN':
             if pygame.mouse.get_pressed()[0] == 0:
                 #get current pen mode
                 (mouseX, mouseY) = pygame.mouse.get_pos()
@@ -106,7 +107,7 @@ class Sprite():
     holds onto a little fragment of image
     """
 
-    def __init__(selt, type):
+    def __init__(self, type):
         self.type = 0
         self.coords = (0, 0)
 
@@ -119,13 +120,12 @@ class Sprite():
 
 if __name__ == '__main__':
     pygame.init()
-    size = SCREEN_SIZE
+    size = (500, 500)
 
     model = Model(500, 500)
     view = PyGameView(model, size)
     controller = PyGameController(model)
     running = True
-li
     while running:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -134,7 +134,5 @@ li
                 # handle event can end pygame loop
                 if not controller.handle_event(event):
                     running = False
-        model.update()
-        if model.show_gen:
-            view.draw_sprite()
-            time.sleep(model.sleep_time)
+        view.draw_sprite()
+        time.sleep(model.sleep_time)
