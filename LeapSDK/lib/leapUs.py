@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 
 from numpy import pi
 
+app_width = 1920/2
+app_height = 1080/2
+
 class SampleListener(Leap.Listener):
 
     def on_connect(self, controller):
@@ -40,10 +43,14 @@ def literallyEverything(controller):
     }
 
     if frame.hands.rightmost.is_right:
-        if frame.hands.rightmost.pinch_strength > 0.7:
-            everything["mode"] = 'draw'
-        elif frame.hands.rightmost.grab_strength > 0.7:
+
+        pinch = frame.hands.rightmost.pinch_strength
+        grab = frame.hands.rightmost.grab_strength
+
+        if grab > pinch and grab > 0.9:
             everything["mode"] = 'clear'
+        elif pinch > 0.7:
+            everything["mode"] = 'draw'
 
         if frame.hands.rightmost.is_valid:
             everything["position"] = positionMap(controller)
@@ -72,7 +79,6 @@ def literallyEverything(controller):
         # Map color so you only need to do 270 degrees hand rotation to get the full color wheel
         everything["color"] = (((pi - angle) * 180 / pi) * 360/270) % 360 # don't even worry about it
     if frame.hands.leftmost.is_left and frame.hands.leftmost.grab_strength > 0.7:
-        app_width = 800
         # print frame.hands.leftmost.palm_position
         iBox = frame.interaction_box
         leapPoint = frame.hands.leftmost.stabilized_palm_position
@@ -93,9 +99,6 @@ def positionMap(controller):
     thanks leap motion website
     """
     frame = controller.frame()
-
-    app_width = 800
-    app_height = 600
 
     app_x = -1
     app_y = -1

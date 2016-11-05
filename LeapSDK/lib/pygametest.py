@@ -162,7 +162,7 @@ if __name__ == '__main__':
 
     #pygame
     pygame.init()
-    size = (800, 600)
+    size = (1920,1080)
     model = Model(size[0], size[1])
     view = PyGameView(model, size)
     controller = PyGameController(model)
