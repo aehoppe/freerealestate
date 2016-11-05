@@ -11,6 +11,7 @@ class PyGameView(object):
     Provides a view of the environment in a pygame window
     """
 
+
     def __init__(self, model, size):
         """
         Initialize model
@@ -20,8 +21,12 @@ class PyGameView(object):
         self.color.hsva = (0, 100, 100, 100)
         self.model = model
         self.screen = pygame.display.set_mode(size)
-        self.bg = pygame.image.load("background.bmp")
-        self.ch = pygame.image.load("crosshair.png")
+        self.bg = pygame.image.load("background.bmp").convert()
+        self.cursor = pygame.image.load("cursor.bmp").convert()
+
+        self.cursorOldX = 0;
+        self.cursorOldY = 0;
+
         # self.bg = pygame.transform.scale(self.bg,(800,600))
         self.screen.blit(self.bg,(0,0))
         pygame.display.update()
@@ -38,7 +43,7 @@ class PyGameView(object):
             (x, y),
             5
         )
-        pygame.display.update()
+        pygame.display.update([pygame.Rect(x-5, y-5, x+5, y-5)])
 
     def draw_line(self, lastPoint, currentPoint):
         """
@@ -77,6 +82,15 @@ class PyGameView(object):
                 )
             pygame.display.update()
 
+    def draw_cursor(self, x, y):
+        self.screen.blit(self.cursor,(x, y))
+
+        dirtyrect = self.bg.subsurface((self.cursorOldX, self.cursorOldY,self.cursor.width, self.cursor.height)) # calculate clean rect
+        self.screen.blit(dirtyrect, (self.cursorOldX, self.cursorOldY)) # blit clean rect on top of "dirty" screen
+        pygame.display.update([])
+        self.cursorOldX, self.cursorOldY = (x, y)
+        pygame.display.update([dirtyrect])
+
 
 class Model(object):
     """
@@ -98,9 +112,12 @@ class Model(object):
         self.height = height
         self.width = width
 
-        self.spriteX = 0
-        self.spriteY = 0
+        # self.spriteX = 0
+        # self.spriteY = 0
         self.drawNew = 0
+        self.mode = ''
+
+        self.dirtyRects = []
 
 
 
@@ -133,10 +150,10 @@ class PyGameController(object):
         elif event.key == pygame.K_SPACE:
             return False
         elif event.key == pygame.K_q:
-            if self.mode == 0:
-                self.mode = 1
+            if self.model.mode == 0:
+                self.model.mode = 1
             else:
-                self.mode = 0
+                self.model.mode = 0
         elif event.key == pygame.K_r:
             self.reset = not self.reset
         elif event.key == pygame.K_SPACE:
