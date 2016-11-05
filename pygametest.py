@@ -112,12 +112,12 @@ class PyGameController(object):
 
 if __name__ == '__main__':
     #leap motion
-   # Create a sample listener and controller
-   listener = SampleListener()
-   controllerLeap = Leap.Controller()
+    # Create a sample listener and controller
+    listener = SampleListener()
+    controllerLeap = Leap.Controller()
 
-   # Have the sample listener receive events from the controller
-   controllerLeap.add_listener(listener)
+    # Have the sample listener receive events from the controller
+    controllerLeap.add_listener(listener)
 
 
     #pygame
