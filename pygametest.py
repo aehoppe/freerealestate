@@ -3,6 +3,8 @@ from pygame.locals import *
 import time
 import os
 
+
+
 class PyGameView(object):
     """
     Provides a view of the environment in a pygame window
@@ -15,6 +17,9 @@ class PyGameView(object):
         """
         self.model = model
         self.screen = pygame.display.set_mode(size)
+        self.bg = pygame.image.load("background.bmp")
+        # self.bg = pygame.transform.scale(self.bg,(800,600))
+        self.screen.blit(self.bg,(0,0))
 
     def draw_circle(self, x, y):
         pygame.draw.circle(
