@@ -31,12 +31,12 @@ class PyGameView(object):
         self.screen.blit(self.bg,(0,0))
         pygame.display.update()
 
-    def draw_circle(self, x, y):
+    def draw_circle(self, x, y, radius):
         pygame.draw.circle(
             self.screen,
             self.color,
             (x, y),
-            5
+            radius
         )
         pygame.display.update()
 
@@ -167,6 +167,7 @@ if __name__ == '__main__':
     view = PyGameView(model, size)
     controller = PyGameController(model)
     running = True
+    radius = 5
 
     graspLength = 750 #ms. How long does the hand have to be grasping to count as reset
     graspStart = 0 # Counter
@@ -202,7 +203,7 @@ if __name__ == '__main__':
                 # x, y = pygame.mouse.get_pos()
 
                 # Draw individual points
-                view.draw_circle(x, y)
+                view.draw_circle(x, y, radius)
 
                 # # Draw lines between points
                 # if lastPoint:
@@ -219,6 +220,11 @@ if __name__ == '__main__':
             view.set_color(everything['color'])
         else:
             view.draw_lock(True)
+
+        if everything['thickness']!=None:
+            radius = int(everything['thickness'])
+        print radius
+
 
         lastPoint = (x, y)
 

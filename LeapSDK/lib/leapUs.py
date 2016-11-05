@@ -20,7 +20,7 @@ class SampleListener(Leap.Listener):
 
         everything = literallyEverything(controller)
         # ohgod.append(everything["position"])
-        print "pinchin: {}, color: {}, position: {}, {}".format(everything["mode"], everything["color"], everything["position"][0], everything["position"][1])
+        # print "pinchin: {}, color: {}, position: {}, {}".format(everything["mode"], everything["color"], everything["position"][0], everything["position"][1])
 
         # print "Pinch Strength: %f" % frame.hands.rightmost.pinch_strength
         # # print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d" % (
@@ -35,7 +35,8 @@ def literallyEverything(controller):
     everything = {
         "mode": "",
         "position": (-1,-1),
-        "color": None
+        "color": None,
+        "thickness": None
     }
 
     if frame.hands.rightmost.is_right:
@@ -47,12 +48,42 @@ def literallyEverything(controller):
         if frame.hands.rightmost.is_valid:
             everything["position"] = positionMap(controller)
 
+            # #for finger thickness gestures
+            # rIndexFinger = frame.hands.rightmost.fingers[1] #take right index finger
+            # if frame.hands.leftmost.is_valid:
+            #     lIndexFinger = frame.hands.leftmost.fingers[1] #take right index finger
+            #     rIndexFingerPos = rIndexFinger.bone(3).center #position of tip of right index finger
+            #
+            #     if rIndexFingerPos == lIndexFinger.bone(0).center:
+            #         print '0'
+            #     elif rIndexFingerPos == lIndexFinger.bone(1).center:
+            #         print '1'
+            #     elif rIndexFingerPos == lIndexFinger.bone(2).center:
+            #         print '2'
+            #     elif rIndexFingerPos == lIndexFinger.bone(3).center:
+            #         print '3'
+
+    # if knownFinger.is_valid:
+    #     fingerPos = knownFinger.position
+    #     print "\n Finger Position: {}".format(fingerPos)
+
     if frame.hands.leftmost.is_left and frame.hands.leftmost.palm_normal.is_valid and frame.hands.leftmost.pinch_strength < 0.4:
         angle = frame.hands.leftmost.palm_normal.roll
         # Map color so you only need to do 270 degrees hand rotation to get the full color wheel
         everything["color"] = (((pi - angle) * 180 / pi) * 360/270) % 360 # don't even worry about it
-
-
+    if frame.hands.leftmost.is_left and frame.hands.leftmost.grab_strength > 0.7:
+        app_width = 800
+        # print frame.hands.leftmost.palm_position
+        iBox = frame.interaction_box
+        leapPoint = frame.hands.leftmost.stabilized_palm_position
+        normalizedPoint = iBox.normalize_point(leapPoint, False)
+        thickness = normalizedPoint.x*10
+        if thickness<1:
+            thickness = 1
+        elif thickness>10:
+            thickness = 10
+        everything["thickness"] = thickness
+        print everything['thickness']
 
     return everything
 
