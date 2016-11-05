@@ -21,6 +21,10 @@ class PyGameView(object):
         # self.bg = pygame.transform.scale(self.bg,(800,600))
         self.screen.blit(self.bg,(0,0))
 
+    def draw_background(self):
+        self.screen.blit(self.bg,(0,0))
+        pygame.display.update()
+
     def draw_circle(self, x, y):
         pygame.draw.circle(
             self.screen,
@@ -71,6 +75,8 @@ class PyGameController(object):
             model (object): contains attributes of the environment
         """
         self.model = model
+        self.mode = 0
+        self.reset = False
 
     def handle_event(self, event):
         """
@@ -84,8 +90,12 @@ class PyGameController(object):
         elif event.key == pygame.K_SPACE:
             return False
         elif event.key == pygame.K_q:
-            self.model.spriteX, self.model.spriteY = pygame.mouse.get_pos()
-            self.model.drawNew = 1
+            if self.mode == 0:
+                self.mode = 1
+            else:
+                self.mode = 0
+        elif event.key == pygame.K_r:
+            self.reset = not self.reset
         elif event.key == pygame.K_SPACE:
             return False
             # if pygame.mouse.get_pressed()[0] == 0:
@@ -114,8 +124,16 @@ if __name__ == '__main__':
                 if not controller.handle_event(event):
                     running = False
 
-            if controller.model.drawNew == 1:
-                controller.model.drawNew = 0
-                view.draw_circle(controller.model.spriteX, controller.model.spriteY)
+            if controller.mode == 1:
+                x, y = pygame.mouse.get_pos()
+                view.draw_circle(x, y)
+
+            if controller.reset:
+                controller.reset = False
+                view.draw_background()
+
+            # if controller.model.drawNew == 1:
+            #     controller.model.drawNew = 0
+            #     view.draw_circle(controller.model.spriteX, controller.model.spriteY)
         # view.draw_sprite()
         # time.sleep(model.sleep_time)
