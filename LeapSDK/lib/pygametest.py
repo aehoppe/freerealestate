@@ -27,6 +27,8 @@ class PyGameView(object):
         self.cursorOldX = 0;
         self.cursorOldY = 0;
 
+        self.dirtyRects = []
+
         # self.bg = pygame.transform.scale(self.bg,(800,600))
         self.screen.blit(self.bg,(0,0))
         pygame.display.update()
@@ -43,7 +45,7 @@ class PyGameView(object):
             (x, y),
             5
         )
-        pygame.display.update([pygame.Rect(x-5, y-5, x+5, y-5)])
+        self.dirtyRects.append(pygame.Rect(x-5, y-5, x+5, y-5))
 
     def draw_line(self, lastPoint, currentPoint):
         """
@@ -51,7 +53,7 @@ class PyGameView(object):
         Both are (x,y) tuples.
         """
         pygame.draw.aaline(self.screen, self.color, lastPoint, currentPoint)
-        pygame.display.update()
+        self.dirtyRects.append(pygame.Rect(lastPoint[0], lastPoint[1], currentPoint[0], currentPoint[1]))
 
     def draw_lock(self, is_locked):
         if is_locked:
@@ -66,10 +68,7 @@ class PyGameView(object):
             wrecked,
             2
             )
-        pygame.display.update()
-
-    def draw_crosshair(self, x, y):
-        self.screen.blit(self.ch, (x, y))
+        self.dirtyRects.append(wrecked)
 
     def set_color(self, angle):
         if self.color.hsva[0] != angle: # Only do things if color has changed
@@ -80,7 +79,7 @@ class PyGameView(object):
                 self.color,
                 wrecked
                 )
-            pygame.display.update()
+            self.dirtyRects.append(wrecked);
 
     def draw_cursor(self, x, y):
         self.screen.blit(self.cursor,(x, y))
@@ -116,8 +115,6 @@ class Model(object):
         # self.spriteY = 0
         self.drawNew = 0
         self.mode = ''
-
-        self.dirtyRects = []
 
 
 
@@ -216,11 +213,14 @@ if __name__ == '__main__':
         else:
             graspStart = -1
             if controller.mode == 'draw':
+                view.draw_cursor(-10, -10)
                 # x, y = pygame.mouse.get_pos()
 
                 # Draw individual points
                 view.draw_circle(x, y)
 
+            else:
+                view.draw_cursor(x, y);
                 # # Draw lines between points
                 # if lastPoint:
                 #     view.draw_line(lastPoint, (x,y))
@@ -236,6 +236,8 @@ if __name__ == '__main__':
             view.set_color(everything['color'])
         else:
             view.draw_lock(True)
+
+        pygame.display.update(view.dirtyRects)
 
         lastPoint = (x, y)
 
