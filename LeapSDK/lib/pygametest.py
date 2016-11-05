@@ -171,6 +171,9 @@ if __name__ == '__main__':
     graspLength = 750 #ms. How long does the hand have to be grasping to count as reset
     graspStart = 0 # Counter
 
+    resetBufferLength = 750 #ms. Allow 750ms of non-drawing to allow the hand to relax
+    resetBufferTime = 0
+
     lastPoint = None
 
     while running:
@@ -196,13 +199,15 @@ if __name__ == '__main__':
             print "\ncurrent time: {}, graspStart: {}".format(pygame.time.get_ticks(), graspStart)
             if (pygame.time.get_ticks() - graspStart) >= graspLength:
                 controller.reset = True
+                resetBufferTime = pygame.time.get_ticks()
         else:
             graspStart = -1
-            if controller.mode == 'draw':
+            if controller.mode == 'draw' and (pygame.time.get_ticks() - resetBufferTime) >= resetBufferLength:
                 # x, y = pygame.mouse.get_pos()
 
                 # Draw individual points
                 view.draw_circle(x, y)
+                resetBufferTime = 0
 
                 # # Draw lines between points
                 # if lastPoint:
@@ -213,6 +218,7 @@ if __name__ == '__main__':
         if controller.reset:
             controller.reset = False
             view.draw_background()
+            view.set_color(0)
 
         if everything['color'] != None:
             view.draw_lock(False)

@@ -39,10 +39,19 @@ def literallyEverything(controller):
     }
 
     if frame.hands.rightmost.is_right:
-        if frame.hands.rightmost.pinch_strength > 0.7:
-            everything["mode"] = 'draw'
-        elif frame.hands.rightmost.grab_strength > 0.7:
+
+        pinch = frame.hands.rightmost.pinch_strength
+        grab = frame.hands.rightmost.grab_strength
+
+        if grab > pinch and grab > 0.8:
             everything["mode"] = 'clear'
+        elif pinch > 0.7:
+            everything["mode"] = 'draw'
+
+        # if frame.hands.rightmost.pinch_strength > 0.7:
+        #     everything["mode"] = 'draw'
+        # elif frame.hands.rightmost.grab_strength > 0.7:
+        #     everything["mode"] = 'clear'
 
         if frame.hands.rightmost.is_valid:
             everything["position"] = positionMap(controller)
