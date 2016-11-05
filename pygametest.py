@@ -130,10 +130,11 @@ if __name__ == '__main__':
 
 
     while running:
+        everything = literallyEverything(controllerLeap)
+        x, y = everything['position']
+        controller.mode = everything['mode']
+
         for event in pygame.event.get():
-            everything = literallyEverything(controllerLeap)
-            x, y = everything['position']
-            controller.mode = everything['mode']
 
             if event.type == QUIT:
                 running = False
@@ -142,13 +143,13 @@ if __name__ == '__main__':
                 if not controller.handle_event(event):
                     running = False
 
-            if controller.mode == 'draw':
-                # x, y = pygame.mouse.get_pos()
-                view.draw_circle(x, y)
+        if controller.mode == 'draw':
+            # x, y = pygame.mouse.get_pos()
+            view.draw_circle(x, y)
 
-            if controller.reset:
-                controller.reset = False
-                view.draw_background()
+        if controller.reset:
+            controller.reset = False
+            view.draw_background()
 
             # if controller.model.drawNew == 1:
             #     controller.model.drawNew = 0
