@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import time
 import os
+from leapUs.py import *
 
 
 
@@ -20,6 +21,8 @@ class PyGameView(object):
         self.bg = pygame.image.load("background.bmp")
         # self.bg = pygame.transform.scale(self.bg,(800,600))
         self.screen.blit(self.bg,(0,0))
+        pygame.display.update()
+
 
     def draw_background(self):
         self.screen.blit(self.bg,(0,0))
@@ -75,7 +78,7 @@ class PyGameController(object):
             model (object): contains attributes of the environment
         """
         self.model = model
-        self.mode = 0
+        self.mode = ''
         self.reset = False
 
     def handle_event(self, event):
@@ -108,15 +111,30 @@ class PyGameController(object):
 
 
 if __name__ == '__main__':
+    #leap motion
+   # Create a sample listener and controller
+   listener = SampleListener()
+   controllerLeap = Leap.Controller()
+
+   # Have the sample listener receive events from the controller
+   controllerLeap.add_listener(listener)
+
+
+    #pygame
     pygame.init()
     size = (800, 600)
-
     model = Model(size[0], size[1])
     view = PyGameView(model, size)
     controller = PyGameController(model)
     running = True
+
+
     while running:
         for event in pygame.event.get():
+            everything = literallyEverything(controllerLeap)
+            x, y = everything['position']
+            controller.mode = everything['mode']
+
             if event.type == QUIT:
                 running = False
             else:
@@ -124,8 +142,8 @@ if __name__ == '__main__':
                 if not controller.handle_event(event):
                     running = False
 
-            if controller.mode == 1:
-                x, y = pygame.mouse.get_pos()
+            if controller.mode == 'draw':
+                # x, y = pygame.mouse.get_pos()
                 view.draw_circle(x, y)
 
             if controller.reset:
@@ -137,3 +155,4 @@ if __name__ == '__main__':
             #     view.draw_circle(controller.model.spriteX, controller.model.spriteY)
         # view.draw_sprite()
         # time.sleep(model.sleep_time)
+    controller.remove_listener(listener)
